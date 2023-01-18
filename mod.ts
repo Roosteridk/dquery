@@ -43,20 +43,8 @@ export class DQElement {
     return this.el;
   }
 
-  attr = (key: string) => this.el.getAttribute(key);
-  has = (key: string) => this.el.hasAttribute(key);
-
-  /**
-   * Check the current matched set of elements against a selector, DOM element, or dQuery element and return true if at least one of these elements matches the given arguments.
-   */
-  is(match: string | DQElement | DOMElement) {
-    if (match instanceof DQElement) {
-      return this.el === match.el;
-    }
-    if (match instanceof DOMElement) {
-      return this.el === match;
-    }
-    return this.el.matches(match);
+  attr(key: string){
+    return this.el.getAttribute(key);
   }
 }
 
@@ -126,6 +114,23 @@ export class DQList implements ArrayLike<DQElement> {
   }
 
   /**
+   * Check the current matched set of elements against a selector, DOM element, or dQuery element
+   * @returns True if the selector matches at least one element in the set; otherwise, false.
+   */
+  is(match: string | DQElement | DOMElement) {
+    if (match instanceof DQElement) {
+      return [...this].some((el) => el.element === match.element);
+    }
+    if (match instanceof DOMElement) {
+      return [...this].some((el) => el.element === match);
+    }
+    if (typeof match === "string") {
+      return [...this].some((el) => el.element.matches(match));
+    }
+    return false;
+  }
+
+  /**
    * Reduce the set of matched elements to those that match the selector or pass the function's test.
    * @param test A string containing a selector expression to match the current set of elements against or a predicate function.
    * @returns A shallow copy of the dQuery object with the filtered elements.
@@ -133,7 +138,7 @@ export class DQList implements ArrayLike<DQElement> {
   filter(test: string | ((el: DQElement) => boolean)) {
     let filtered: DQElement[] = [];
     if (typeof test === "string") {
-      filtered = [...this].filter((el) => el.is(test));
+      filtered = [...this].filter((el) => el.element.matches(test));
     }
     if (typeof test === "function") {
       filtered = [...this].filter(test);
