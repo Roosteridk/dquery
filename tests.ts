@@ -42,11 +42,11 @@ Deno.test("dQuery", async (t) => {
     assertEquals(list.last.text, "Goodbye World");
   });
 
-  await t.step("filter", () => {
-    assertEquals(list.filter((el) => el.text === "Hello World"), [list.first]);
-  });
-
   await t.step("prop", () => {
     assertEquals(el.prop("tagName"), "H1");
+  })
+
+  await t.step("find" , ()=> {
+    assertEquals(el.find("b").text, "bold");
   })
 });
