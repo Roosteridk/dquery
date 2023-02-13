@@ -72,7 +72,7 @@ export class dQuery implements ArrayLike<Element> {
    * Get the last element in the list.
    */
   get last() {
-    return this[this.length - 1];
+    return new dQuery([this[this.length - 1]]);
   }
 
   /**
@@ -81,7 +81,7 @@ export class dQuery implements ArrayLike<Element> {
    * @returns The property value.
    */
   prop(string: keyof Element) {
-    return this[0].getAttribute(string);
+    return this[0][string];
   }
 
   /**
@@ -106,7 +106,7 @@ export class dQuery implements ArrayLike<Element> {
    * @param test A string containing a selector expression to match the current set of elements against or a predicate function.
    * @returns A shallow copy of the dQuery object with the filtered elements.
    */
-  filter(test: string | ((el: Element) => boolean)) {
+  filter(test: string | ((el: Element | dQuery) => boolean)) {
     let filtered: Element[] = [];
     if (typeof test === "string") {
       filtered = [...this].filter((el) => el.matches(test));
